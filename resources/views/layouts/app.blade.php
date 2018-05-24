@@ -28,7 +28,7 @@
   <script>
     $( function() {
         $( "#spots" ).autocomplete({
-              source: document.location.origin + '/home/auto_search',
+              source: document.location.origin + '/exitapi/home/auto_search',
               minLength: 1,
               select: function(event, ui) {
                     $('#spot').val(ui.item.value);
@@ -42,7 +42,7 @@
         $('.parent').on('change', function(){
             var trackId = $(this).val();
             $.ajax({
-                url: document.location.origin + '/spots/get_station_list',
+                url: document.location.origin + '/exitapi/spots/get_station_list',
                 type: "POST",
                 dataType: 'json',
                 data: {
@@ -62,7 +62,7 @@
         $('.children').on('change', function(){
             var stationId = $(this).val();
             $.ajax({
-                url: document.location.origin + '/spots/get_exit_list',
+                url: document.location.origin + '/exitapi/get_exit_list',
                 type: "POST",
                 dataType: 'json',
                 data: {
