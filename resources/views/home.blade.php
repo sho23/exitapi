@@ -6,8 +6,8 @@
         <div class="search col-sm-4 my-2 offset-sm-8">
             <form action="{{ action('HomeController@search') }}" method="GET" class="form-inline">
                 <div class="form-group">
-                      <label for="tags">Spot: </label>
-                    <input type="text" name="q" class="form-control mx-sm-3" id="tags">
+                      <label for="spots">Spot: </label>
+                    <input type="text" name="q" class="form-control mx-sm-3" id="spots">
                 </div>
                  <button type="submit" class="btn btn-primary">Submit</button>
             </form>

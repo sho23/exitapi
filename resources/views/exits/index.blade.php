@@ -4,7 +4,7 @@
 <div id="wrap">
     <div class="container">
         <div class="page-header">
-            <h5 class="text-center">{{ $station->name }}</h5>
+            <h5 class="text-center">{{ $station->track_name }} => {{ $station->name }}</h5>
         </div>
         <div class="row">
                 @foreach ($exits as $exit)
