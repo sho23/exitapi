@@ -19,10 +19,14 @@ class ExitsController extends Controller
     public function index($id)
     {
         $station = DB::table('stations')
-                ->where('id', $id)
+                ->where('stations.id', $id)
+                ->where('stations.publish_flag', 1)
+                ->join('tracks', 'stations.track_id', '=', 'tracks.id')
+                ->select('stations.*', 'tracks.name as track_name')
                 ->first();
         $exits = DB::table('exits')
                 ->where('station_id', $id)
+                ->where('exits.publish_flag', 1)
                 ->get();
         return view('exits.index', compact('exits', 'station'));
     }
