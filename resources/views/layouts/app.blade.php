@@ -62,7 +62,7 @@
         $('.children').on('change', function(){
             var stationId = $(this).val();
             $.ajax({
-                url: document.location.origin + '/exitapi/get_exit_list',
+                url: document.location.origin + '/exitapi/spots/get_exit_list',
                 type: "POST",
                 dataType: 'json',
                 data: {
