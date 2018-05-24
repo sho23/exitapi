@@ -25,6 +25,8 @@ Route::get('stations/{post_id}', 'StationsController@index')->name('stations.ind
 Route::get('exits/{station_id}', 'ExitsController@index')->name('exits.index');
 Route::get('spots/{exit_id}', 'SpotsController@index')->name('spots.index');
 Route::get('search/', 'HomeController@search')->name('search');
-Route::post('spots', 'SpotsController@store')->name('spots.store');
+Route::post('spots/store', 'SpotsController@store')->name('spots.store');
 
 Route::get('home/auto_search','HomeController@autoSearch');
+Route::post('spots/get_station_list/','SpotsController@getStationList');
+Route::post('spots/get_exit_list/','SpotsController@getExitList');

@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Support\Facades\Input;
+use Response;
+use App\Spot;
+use App\ExitSpot;
 
 class SpotsController extends Controller
 {
@@ -21,9 +25,9 @@ class SpotsController extends Controller
         $exit = DB::table('exits')
                 ->where('id', $id)
                 ->first();
-        $spots = DB::table('exit_spot')
-                ->where('exit_spot.exit_id', $id)
-                ->join('spots', 'exit_spot.spot_id', '=', 'spots.id')
+        $spots = DB::table('exit_spots')
+                ->where('exit_spots.exit_id', $id)
+                ->join('spots', 'exit_spots.spot_id', '=', 'spots.id')
                 ->get();
         // var_dump($spots);
         // exit();
@@ -37,7 +41,10 @@ class SpotsController extends Controller
      */
     public function create()
     {
-        return view('spots.create');
+        $trackList = $this->getTrackList();
+        $stationList = ['路線を選択してください'];
+        $exitList = ['駅を選択してください'];
+        return view('spots.create', compact('trackList', 'stationList', 'exitList'));
     }
 
     /**
@@ -48,9 +55,22 @@ class SpotsController extends Controller
      */
     public function store(Request $request)
     {
-        var_dump($request);
-        exit();
-        //
+        $this->validate($request, [
+            'name' => 'required|max:191',
+            'exit' => 'required',
+            'address' => 'required',
+        ]);
+        $spot = new Spot;
+        $spot->name = $request->name;
+        $spot->address = $request->address;
+        $spot->save();
+
+        $exitSpot = new ExitSpot;
+        $exitSpot->exit_id = $request->exit;
+        $exitSpot->spot_id = $spot->id;
+        $exitSpot->save();
+
+        return redirect()->route('spots.create');
     }
 
     /**
@@ -96,5 +116,43 @@ class SpotsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getTrackList()
+    {
+        $query = DB::table('tracks'); 
+        $query->where('publish_flag', 1);
+        $tracks = $query->get();
+        $trackList = [];
+        foreach ($tracks as $track) {
+            $trackList[$track->id] = $track->name;
+        }
+        return $trackList;
+    }
+    public function getStationList(Request $request)
+    {
+        $query = DB::table('stations');
+        $query->where('publish_flag', 1);
+        $query->where('stations.track_id', $request->track_id);
+        $stations = $query->get();
+
+        $stationList = [];
+        foreach ($stations as $station) {
+            $stationList[$station->id] = $station->name;
+        }
+        return Response::json($stationList);
+    }
+    public function getExitList(Request $request)
+    {
+        $query = DB::table('exits');
+        $query->where('publish_flag', 1);
+        $query->where('exits.station_id', $request->station_id);
+        $exits = $query->get();
+
+        $exitList = [];
+        foreach ($exits as $exit) {
+            $exitList[$exit->id] = $exit->name;
+        }
+        return Response::json($exitList);
     }
 }

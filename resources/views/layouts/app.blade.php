@@ -26,15 +26,64 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script>
-  $( function() {
-    $( "#tags" ).autocomplete({
-          source: 'home/auto_search',
-          minLength: 1,
-          select: function(event, ui) {
-                $('#spot').val(ui.item.value);
-          }
+    $( function() {
+        $( "#spots" ).autocomplete({
+              source: document.location.origin + '/home/auto_search',
+              minLength: 1,
+              select: function(event, ui) {
+                    $('#spot').val(ui.item.value);
+              }
+        });
+        $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+        });
+        $('.parent').on('change', function(){
+            var trackId = $(this).val();
+            $.ajax({
+                url: document.location.origin + '/spots/get_station_list',
+                type: "POST",
+                dataType: 'json',
+                data: {
+                track_id: trackId
+                }
+            })
+            .done(function(data){
+                $('.children option').remove();
+                $.each(data, function(id, name){
+                  $('.children').append($('<option>').text(name).attr('value', id));
+                });
+            })
+            .fail(function(){
+                console.log("失敗");
+            });
+        });
+        $('.children').on('change', function(){
+            var stationId = $(this).val();
+            $.ajax({
+                url: document.location.origin + '/spots/get_exit_list',
+                type: "POST",
+                dataType: 'json',
+                data: {
+                station_id: stationId
+                }
+            })
+            .done(function(data){
+                //selectタグ（子） の option値 を一旦削除
+                $('.childchildren option').remove();
+                //select.php から戻って来た data の値をそれそれ optionタグ として生成し、
+                // .car_model に optionタグ を追加する
+                $.each(data, function(id, name){
+                  $('.childchildren').append($('<option>').text(name).attr('value', id));
+                });
+            })
+            .fail(function(){
+                console.log("失敗");
+            });
+        });
+
     });
-  } );
   </script>
 </head>
 <body>
@@ -60,8 +109,8 @@
                         @guest
                             <li><a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a></li>
                             <li><a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a></li>
-                            <li><a href="{{ url('/spots/create') }}" class="btn btn-primary">新規追加</a></li>
                         @else
+                            <li><a href="{{ url('/spots/create') }}" class="btn btn-primary">新規追加</a></li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
