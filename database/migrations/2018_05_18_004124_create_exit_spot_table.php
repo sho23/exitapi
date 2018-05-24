@@ -13,7 +13,7 @@ class CreateExitSpotTable extends Migration
      */
     public function up()
     {
-        Schema::create('exit_spot', function (Blueprint $table) {
+        Schema::create('exit_spots', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('exit_id')->unsigned();
@@ -37,6 +37,6 @@ class CreateExitSpotTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('exit_spot');
+        Schema::dropIfExists('exit_spots');
     }
 }

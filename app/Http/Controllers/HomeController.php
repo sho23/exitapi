@@ -42,10 +42,10 @@ class HomeController extends Controller
                 $spotList[] = $spot->id;
             }
 
-            $exits = DB::table('exit_spot')
-                ->whereIn('exit_spot.spot_id', $spotList)
-                ->join('exits', 'exit_spot.exit_id', '=', 'exits.id')
-                ->join('spots', 'exit_spot.spot_id', '=', 'spots.id')
+            $exits = DB::table('exit_spots')
+                ->whereIn('exit_spots.spot_id', $spotList)
+                ->join('exits', 'exit_spots.exit_id', '=', 'exits.id')
+                ->join('spots', 'exit_spots.spot_id', '=', 'spots.id')
                 ->join('stations', 'exits.station_id', '=', 'stations.id')
                 ->join('tracks', 'stations.track_id', '=', 'tracks.id')
                 ->select('spots.id as spot_id','stations.id as station_id', 'spots.name as spot_name', 'stations.name as station_name','tracks.name as track_name','exits.name as exit_name')
