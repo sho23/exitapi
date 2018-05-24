@@ -10,7 +10,21 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/', 'HomeController@index');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+// Route::resource('stations', 'StationsController');
+Route::get('spots/create', 'SpotsController@create')->name('spots.create');
+Route::get('stations/{post_id}', 'StationsController@index')->name('stations.index');
+Route::get('exits/{station_id}', 'ExitsController@index')->name('exits.index');
+Route::get('spots/{exit_id}', 'SpotsController@index')->name('spots.index');
+Route::get('search/', 'HomeController@search')->name('search');
+Route::post('spots', 'SpotsController@store')->name('spots.store');
+
+Route::get('home/auto_search','HomeController@autoSearch');

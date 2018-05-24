@@ -14,9 +14,7 @@ class CreateSpotsTable extends Migration
     public function up()
     {
         Schema::create('spots', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('exit_id')->unsigned();
             $table->string('name');
             $table->string('address');
             $table->string('latitude')->nullable();
@@ -26,10 +24,6 @@ class CreateSpotsTable extends Migration
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
-            $table->foreign('exit_id')
-                    ->references('id')
-                    ->on('exits')
-                    ->onDelete('cascade');
         });
     }
 
