@@ -60,14 +60,22 @@ class SpotsController extends Controller
             'exit' => 'required',
             'address' => 'required',
         ]);
-        $spot = new Spot;
-        $spot->name = $request->name;
-        $spot->address = $request->address;
-        $spot->save();
+        $currentSpot = DB::table('spots')
+                ->where('name', $request->name)
+                ->first();
+        if (!empty($currentSpot)) {
+            $spotId = $currentSpot->id;
+        } else {
+            $spot = new Spot;
+            $spot->name = $request->name;
+            $spot->address = $request->address;
+            $spot->save();
+            $spotId = $spot->id;;
+        }
 
         $exitSpot = new ExitSpot;
         $exitSpot->exit_id = $request->exit;
-        $exitSpot->spot_id = $spot->id;
+        $exitSpot->spot_id = $spotId;
         $exitSpot->save();
 
         return redirect()->route('spots.create');
