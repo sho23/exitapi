@@ -122,6 +122,7 @@ class SpotsController extends Controller
     {
         $query = DB::table('tracks'); 
         $query->where('publish_flag', 1);
+        $query->orderBy('name', 'desc');
         $tracks = $query->get();
         $trackList = [];
         foreach ($tracks as $track) {

@@ -26,7 +26,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $tracks = DB::table('tracks')->where('publish_flag', 1)->get();
+        $tracks = DB::table('tracks')->where('publish_flag', 1)->orderBy('name', 'desc')->get();
         return view('home', compact('tracks'));
     }
 
