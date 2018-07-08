@@ -54,27 +54,6 @@ class HomeController extends Controller
             foreach ($exits as $exit) {
                 $spotList[$exit->spot_name][$exit->station_name][] = $exit;
             }
-            // $spots = DB::table('spots')
-            //     ->where('spots.name', 'LIKE', "%$query%")
-            //     ->join('exits', 'spots.exit_id', '=', 'exits.id')
-            //     ->join('stations', 'exits.station_id', '=', 'stations.id')
-            //     ->join('tracks', 'stations.track_id', '=', 'tracks.id')
-            //     ->select('spots.name', 'exits.name as exit_name', 'stations.name as station_name', 'tracks.name as track_name', 'tracks.id as track_id', 'stations.id as station_id')
-            //     ->get();
-            // $spots = $spots->toArray();
-            // $spotList = [];
-            // $stationIdList = [];
-            // foreach ($spots as $spot) {
-            //     $spotList[$spot->track_id][] = $spot->exit_name;
-            //     $stationIdList[] = $spot->station_id;
-            // }
-            // $stationIdList = array_unique($stationIdList);
-            // $stations = DB::table('stations')
-            //     ->whereIn('stations.id', $stationIdList)
-            //     ->join('tracks', 'stations.track_id', '=', 'tracks.id')
-            //     ->select('stations.*','tracks.name as track_name')
-            //     ->get();
-            // $stations = $stations->toArray();
         }
         return view('search', compact('spotList'));
     }
@@ -92,5 +71,30 @@ class HomeController extends Controller
             $results[] = ['label' => $spot->name, 'value' => $spot->name];
         }
         return Response::json($results);
+    }
+
+    public function getExits(){
+        $query = Request::get('station');
+        if ($query) {
+            $station = DB::table('stations')
+                ->where('stations.name', $query)
+                ->where('tracks.publish_flag', 2)
+                ->join('tracks', 'stations.track_id', '=', 'tracks.id')
+                ->select('stations.name as station_name', 'tracks.name as track_name', 'stations.id as station_id')
+                ->first();
+            $exits = DB::table('exits')
+                ->where('station_id', $station->station_id)
+                ->whereNotNull('latitude')
+                ->where('exits.publish_flag', 1)
+                ->get();
+            $exits = $exits->toArray();
+
+            $exitList= [];
+            foreach ($exits as $exit) {
+                $exitList[$exit->name] = [$exit->latitude, $exit->longitude];
+            }
+            $dataList = ['track' => $station->track_name,'station' => $station->station_name, 'exits' => $exitList];
+            return $dataList;
+        }
     }
 }
