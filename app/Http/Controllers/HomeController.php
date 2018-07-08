@@ -94,7 +94,7 @@ class HomeController extends Controller
                 $exitList[$exit->name] = [$exit->latitude, $exit->longitude];
             }
             $dataList = ['track' => $station->track_name,'station' => $station->station_name, 'exits' => $exitList];
-            return $dataList;
+            return json_encode($dataList);
         }
     }
 }
