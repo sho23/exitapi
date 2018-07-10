@@ -76,13 +76,23 @@ class HomeController extends Controller
 
     public function getExits(){
         $query = Request::get('station');
+        $lang = Request::get('lang');
         if ($query) {
-            $station = DB::table('stations')
-                ->where('stations.name', $query)
-                ->where('tracks.publish_flag', 2)
-                ->join('tracks', 'stations.track_id', '=', 'tracks.id')
-                ->select('stations.name as station_name', 'tracks.name as track_name', 'stations.id as station_id')
-                ->first();
+            if (isset($lang) && $lang == 'en') {
+                $station = DB::table('stations')
+                    ->where('stations.en_name', $query)
+                    ->where('tracks.publish_flag', 2)
+                    ->join('tracks', 'stations.track_id', '=', 'tracks.id')
+                    ->select('stations.en_name as station_name', 'tracks.name as track_name', 'stations.id as station_id')
+                    ->first();
+            } else {
+                $station = DB::table('stations')
+                    ->where('stations.name', $query)
+                    ->where('tracks.publish_flag', 2)
+                    ->join('tracks', 'stations.track_id', '=', 'tracks.id')
+                    ->select('stations.name as station_name', 'tracks.name as track_name', 'stations.id as station_id')
+                    ->first();
+            }
             $exits = DB::table('exits')
                 ->where('station_id', $station->station_id)
                 ->whereNotNull('latitude')
