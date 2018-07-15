@@ -103,7 +103,11 @@ class HomeController extends Controller
                 ->join('track_stations', 'tracks.id', '=', 'track_stations.track_id')
                 ->select('name')
                 ->get();
-            $trackList = $tracks->toArray();
+            $tracks = $tracks->toArray();
+            $trackList = [];
+            foreach ($tracks as $track) {
+                $trackList[] = $track->name;
+            }
 
             $exits = DB::table('exits')
                 ->where('station_id', $station->station_id)
