@@ -82,29 +82,40 @@ class HomeController extends Controller
                 $station = DB::table('stations')
                     ->where('stations.en_name', $query)
                     ->where('tracks.publish_flag', 2)
-                    ->join('tracks', 'stations.track_id', '=', 'tracks.id')
-                    ->select('stations.en_name as station_name', 'tracks.name as track_name', 'stations.id as station_id')
+                    ->where('stations.publish_flag', 1)
+                    ->join('track_stations', 'stations.id', '=', 'track_stations.station_id')
+                    ->join('tracks', 'track_stations.track_id', '=', 'tracks.id')
+                    ->select('stations.en_name as station_name', 'stations.id as station_id')
                     ->first();
             } else {
                 $station = DB::table('stations')
                     ->where('stations.name', $query)
                     ->where('tracks.publish_flag', 2)
-                    ->join('tracks', 'stations.track_id', '=', 'tracks.id')
-                    ->select('stations.name as station_name', 'tracks.name as track_name', 'stations.id as station_id')
+                    ->where('stations.publish_flag', 1)
+                    ->join('track_stations', 'stations.id', '=', 'track_stations.station_id')
+                    ->join('tracks', 'track_stations.track_id', '=', 'tracks.id')
+                    ->select('stations.name as station_name', 'stations.id as station_id')
                     ->first();
             }
+
+            $tracks = DB::table('tracks')
+                ->where('track_stations.station_id', $station->station_id)
+                ->join('track_stations', 'tracks.id', '=', 'track_stations.track_id')
+                ->select('name')
+                ->get();
+            $trackList = $tracks->toArray();
+
             $exits = DB::table('exits')
                 ->where('station_id', $station->station_id)
                 ->whereNotNull('latitude')
                 ->where('exits.publish_flag', 1)
                 ->get();
             $exits = $exits->toArray();
-
             $exitList= [];
             foreach ($exits as $exit) {
                 $exitList[$exit->name] = [$exit->latitude, $exit->longitude];
             }
-            $dataList = ['track' => $station->track_name,'station' => $station->station_name, 'exits' => $exitList];
+            $dataList = ['tracks' => $trackList,'station' => $station->station_name, 'exits' => $exitList];
             return json_encode($dataList);
         }
     }
