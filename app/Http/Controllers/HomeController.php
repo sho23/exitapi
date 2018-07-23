@@ -85,17 +85,17 @@ class HomeController extends Controller
                 $post = DB::table('posts')
                     ->where('posts.formatted_address', $address)
                     ->where('posts.publish_flag', 1)
-                    ->where('stations.name', $station)
+                    ->where('stations.en_name', $station)
                     ->join('stations', 'stations.id', '=', 'posts.station_id')
-                    ->select('stations.name as station_name', 'stations.id as station_id', 'posts.title', 'posts.url')
+                    ->select('stations.en_name as station_name', 'stations.id as station_id', 'posts.title', 'posts.url')
                     ->first();
             } else {
                 $post = DB::table('posts')
                     ->where('posts.formatted_address', $address)
                     ->where('posts.publish_flag', 1)
-                    ->where('stations.en_name', $station)
+                    ->where('stations.name', $station)
                     ->join('stations', 'stations.id', '=', 'posts.station_id')
-                    ->select('stations.en_name as station_name', 'stations.id as station_id', 'posts.title', 'posts.url')
+                    ->select('stations.name as station_name', 'stations.id as station_id', 'posts.title', 'posts.url')
                     ->first();
             }
             if (isset($post)) {
