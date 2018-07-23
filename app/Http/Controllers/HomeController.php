@@ -117,9 +117,9 @@ class HomeController extends Controller
                     ->select('stations.name as station_name', 'stations.id as station_id')
                     ->first();
             }
-
+            if (empty($station)) return;
             $tracks = DB::table('tracks')
-                ->whereIn('track_stations.station_id', $station->station_id)
+                ->where('track_stations.station_id', $station->station_id)
                 ->join('track_stations', 'tracks.id', '=', 'track_stations.track_id')
                 ->select('name')
                 ->get();
@@ -134,8 +134,10 @@ class HomeController extends Controller
                 ->whereNotNull('latitude')
                 ->where('exits.publish_flag', 1)
                 ->get();
+
+            if (empty($exits)) return;
             $exits = $exits->toArray();
-            $exitList= [];
+            $exitList = [];
             foreach ($exits as $exit) {
                 $exitList[$exit->name] = [$exit->latitude, $exit->longitude];
             }
