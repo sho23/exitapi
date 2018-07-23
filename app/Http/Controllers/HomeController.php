@@ -76,14 +76,19 @@ class HomeController extends Controller
 
     public function getPostUrl() {
         $address = Request::get('address');
+        $station = Request::get('station');
+
         $dataList = [];
         if ($address) {
             $post = DB::table('posts')
                 ->where('posts.formatted_address', $address)
                 ->where('posts.publish_flag', 1)
+                ->where('stations.name', $station)
+                ->join('stations', 'stations.id', '=', 'posts.station_id')
+                ->select('stations.name as station_name', 'stations.id as station_id', 'posts.title', 'posts.url')
                 ->first();
             if (isset($post)) {
-                $dataList = ['url' => $post->url, 'title' => $post->title];
+                $dataList = ['url' => $post->url, 'title' => $post->title, 'station' => $post->station_name];
             }
         }
         return json_encode($dataList);
