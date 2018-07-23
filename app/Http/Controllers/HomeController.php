@@ -119,7 +119,7 @@ class HomeController extends Controller
             }
 
             $tracks = DB::table('tracks')
-                ->where('track_stations.station_id', $station->station_id)
+                ->whereIn('track_stations.station_id', $station->station_id)
                 ->join('track_stations', 'tracks.id', '=', 'track_stations.track_id')
                 ->select('name')
                 ->get();
