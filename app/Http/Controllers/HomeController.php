@@ -80,6 +80,7 @@ class HomeController extends Controller
         $lang = Request::get('lang');
 
         $address = str_replace('-', '-', $address);
+        $address = str_replace('−', '-', $address);
         $address = mb_convert_kana($address, "n");
         $dataList = [];
         if ($address) {
