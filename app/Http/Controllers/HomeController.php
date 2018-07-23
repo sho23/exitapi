@@ -79,6 +79,9 @@ class HomeController extends Controller
         $station = Request::get('station');
         $lang = Request::get('lang');
 
+        $address = str_replace('‐', '-', $address);
+        $address = mb_convert_kana($address, "n");
+
         $dataList = [];
         if ($address) {
             if (isset($lang) && $lang == 'en') {
