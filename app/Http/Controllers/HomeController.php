@@ -17,7 +17,7 @@ class HomeController extends Controller
     public function __construct()
     {
         // $this->middleware('auth');
-        $this->middleware('auth', ['except' => 'getExits']);
+        $this->middleware('auth', ['except' => ['getExits', 'getPostUrl']]);
     }
 
     /**
@@ -72,6 +72,21 @@ class HomeController extends Controller
             $results[] = ['label' => $spot->name, 'value' => $spot->name];
         }
         return Response::json($results);
+    }
+
+    public function getPostUrl() {
+        $address = Request::get('address');
+        $dataList = [];
+        if ($address) {
+            $post = DB::table('posts')
+                ->where('posts.formatted_address', $address)
+                ->where('posts.publish_flag', 1)
+                ->first();
+            if (isset($post)) {
+                $dataList = ['url' => $post->url, 'title' => $post->title];
+            }
+        }
+        return json_encode($dataList);
     }
 
     public function getExits(){
