@@ -79,8 +79,7 @@ class HomeController extends Controller
         $station = Request::get('station');
         $lang = Request::get('lang');
 
-        $address = str_replace('-', '-', $address);
-        $address = str_replace('−', '-', $address);
+        $address = str_replace(array("-", "−"), '-', $address);
         $address = mb_convert_kana($address, "n");
         $dataList = [];
         if ($address) {
@@ -134,6 +133,7 @@ class HomeController extends Controller
             if (empty($station)) return;
             $tracks = DB::table('tracks')
                 ->where('track_stations.station_id', $station->station_id)
+                ->whereIn('tracks.publish_flag', [1, 2])
                 ->join('track_stations', 'tracks.id', '=', 'track_stations.track_id')
                 ->select('name')
                 ->get();
