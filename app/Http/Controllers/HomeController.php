@@ -17,7 +17,7 @@ class HomeController extends Controller
     public function __construct()
     {
         // $this->middleware('auth');
-        $this->middleware('auth', ['except' => ['getExits', 'getPostUrl', 'getTracks']]);
+        $this->middleware('auth', ['except' => ['getExits', 'getPostUrl', 'getTracks', 'getExitsById']]);
     }
 
     /**
@@ -126,6 +126,26 @@ class HomeController extends Controller
             }
             return json_encode($trackList);
         }
+    }
+
+    public function getExitsById()
+    {
+        $stationId = Request::get('station_id');
+        if ($stationId) {
+            $exits = DB::table('exits')
+                ->where('station_id', $stationId)
+                ->whereNotNull('latitude')
+                ->where('exits.publish_flag', 1)
+                ->get();
+
+            if (empty($exits)) return;
+            $exits = $exits->toArray();
+            $exitList = [];
+            foreach ($exits as $exit) {
+                $exitList[$exit->name] = [$exit->latitude, $exit->longitude];
+            }
+        }
+        return json_encode($exitList);
     }
 
     public function getExits(){
