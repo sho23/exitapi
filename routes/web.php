@@ -27,6 +27,7 @@ Route::get('spots/{exit_id}', 'SpotsController@index')->name('spots.index');
 Route::get('search/', 'HomeController@search')->name('search');
 Route::get('getExits/', 'HomeController@getExits')->name('getExits');
 Route::get('getPostUrl/', 'HomeController@getPostUrl')->name('getPostUrl');
+Route::get('getTracks/', 'HomeController@getTracks')->name('getTracks');
 Route::post('spots/store', 'SpotsController@store')->name('spots.store');
 
 Route::get('home/auto_search','HomeController@autoSearch');

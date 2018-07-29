@@ -17,7 +17,7 @@ class HomeController extends Controller
     public function __construct()
     {
         // $this->middleware('auth');
-        $this->middleware('auth', ['except' => ['getExits', 'getPostUrl']]);
+        $this->middleware('auth', ['except' => ['getExits', 'getPostUrl', 'getTracks']]);
     }
 
     /**
@@ -105,6 +105,27 @@ class HomeController extends Controller
             }
         }
         return json_encode($dataList);
+    }
+
+    public function getTracks() {
+        $query = Request::get('station');
+        if ($query) {
+            $tracks = DB::table('tracks')
+                ->where('stations.name', 'like', "%{$query}%")
+                ->where('tracks.publish_flag', 2)
+                ->where('stations.publish_flag', 1)
+                ->join('track_stations', 'tracks.id', '=', 'track_stations.track_id')
+                ->join('stations', 'track_stations.station_id', '=', 'stations.id')
+                ->select('tracks.name as track_name', 'stations.name as station_name', 'tracks.id as track_id', 'stations.id as station_id')
+                ->get();
+            if (empty($tracks)) return;
+            $tracks = $tracks->toArray();
+            $trackList = [];
+            foreach ($tracks as $track) {
+                $trackList[] = [$track->track_name . ' ' . $track->station_name, $track->track_id, $track->station_id];
+            }
+            return json_encode($trackList);
+        }
     }
 
     public function getExits(){
